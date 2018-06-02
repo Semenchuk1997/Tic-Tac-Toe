@@ -2,6 +2,8 @@ class Game {
     constructor() {
         this.dragObj = {};
         document.addEventListener('mousedown', this.onMouseDown.bind(this));
+        document.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.addEventListener('mouseup', this.onMouseUp.bind(this));
     }
 
     onMouseDown(e) {
@@ -18,15 +20,9 @@ class Game {
 
         this.dragObj.elem.style.position = 'absolute';
         this.dragObj.elem.style.zIndex = 1000;
-        this.dragObj.elem.parentNode.appendChild(this.dragObj.elem);
 
         this.dragObj.downX = e.pageX;
         this.dragObj.downY = e.pageY;
-
-        this.moveAt(e);
-
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
-        document.addEventListener('mouseup', this.onMouseUp.bind(this));
     }
 
     onMouseMove(e) {
@@ -42,11 +38,13 @@ class Game {
 
         this.dragObj.elem.parentNode.hidden = false;
 
+        if (dropElem === null || dropElem === undefined) return;
+
         if (!dropElem.classList.contains('droppable')) {
             this.dragObj.elem.style.left = this.dragObj.downX - this.dragObj.shiftX + 'px';
             this.dragObj.elem.style.top = this.dragObj.downY - this.dragObj.shiftY + 'px';
             this.dragObj = {};
-        } else {
+        } else if (dropElem.children[0] === undefined || dropElem.children[0] === null) {
             this.dragObj.elem.style.position = "";
             this.dragObj.elem.classList.remove('draggable');
             dropElem.appendChild(this.dragObj.elem);
@@ -77,7 +75,8 @@ class Game {
 
     checkField() {
         let td = document.getElementsByTagName('td'),
-            grid = [];
+            grid = [],
+            win = false;
 
         for (let i = 0; i < td.length; i++) {
             if (td[i].children[0] === undefined) {
@@ -97,34 +96,47 @@ class Game {
 
         if (grid[0] === grid[1] && grid[0] === grid[2] && grid[0] !== null) {
             alert(`WIN ${grid[0]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[3] === grid[4] && grid[3] === grid[5] && grid[3] !== null) {
             alert(`WIN ${grid[3]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[6] === grid[7] && grid[6] === grid[8] && grid[6] !== null) {
             alert(`WIN ${grid[6]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[0] === grid[3] && grid[0] === grid[6] && grid[0] !== null) {
             alert(`WIN ${grid[0]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[1] === grid[4] && grid[1] === grid[7] && grid[1] !== null) {
             alert(`WIN ${grid[1]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[2] === grid[5] && grid[2] === grid[8] && grid[2] !== null) {
             alert(`WIN ${grid[2]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[0] === grid[4] && grid[0] === grid[8] && grid[0] !== null) {
             alert(`WIN ${grid[0]}`);
+            win = true;
             window.location.reload(false);
         }
         if (grid[2] === grid[4] && grid[2] === grid[6] && grid[2] !== null) {
             alert(`WIN ${grid[2]}`);
+            win = true;
+            window.location.reload(false);
+        }
+
+        if (grid.indexOf(null) === -1 && !win) {
+            alert('nobody win');
             window.location.reload(false);
         }
     }
