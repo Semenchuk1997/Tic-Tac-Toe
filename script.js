@@ -52,6 +52,7 @@ class Game {
             dropElem.appendChild(this.dragObj.elem);
             this.appendElement(this.dragObj.elem);
             this.dragObj = {};
+            this.checkField();
         }
     }
 
@@ -72,6 +73,60 @@ class Game {
         }
 
         document.getElementsByClassName('player')[0].appendChild(newElem);
+    }
+
+    checkField() {
+        let td = document.getElementsByTagName('td'),
+            grid = [];
+
+        for (let i = 0; i < td.length; i++) {
+            if (td[i].children[0] === undefined) {
+                grid[i] = null;
+                continue;
+            } else {
+                if (td[i].children[0].classList.contains('playerX')) {
+                    grid[i] = 'X';
+                    continue;
+                }
+                if (td[i].children[0].classList.contains('playerO')) {
+                    grid[i] = "O";
+                    continue;
+                }
+            }
+        }
+
+        if (grid[0] === grid[1] && grid[0] === grid[2] && grid[0] !== null) {
+            alert(`WIN ${grid[0]}`);
+            window.location.reload(false);
+        }
+        if (grid[3] === grid[4] && grid[3] === grid[5] && grid[3] !== null) {
+            alert(`WIN ${grid[3]}`);
+            window.location.reload(false);
+        }
+        if (grid[6] === grid[7] && grid[6] === grid[8] && grid[6] !== null) {
+            alert(`WIN ${grid[6]}`);
+            window.location.reload(false);
+        }
+        if (grid[0] === grid[3] && grid[0] === grid[6] && grid[0] !== null) {
+            alert(`WIN ${grid[0]}`);
+            window.location.reload(false);
+        }
+        if (grid[1] === grid[4] && grid[1] === grid[7] && grid[1] !== null) {
+            alert(`WIN ${grid[1]}`);
+            window.location.reload(false);
+        }
+        if (grid[2] === grid[5] && grid[2] === grid[8] && grid[2] !== null) {
+            alert(`WIN ${grid[2]}`);
+            window.location.reload(false);
+        }
+        if (grid[0] === grid[4] && grid[0] === grid[8] && grid[0] !== null) {
+            alert(`WIN ${grid[0]}`);
+            window.location.reload(false);
+        }
+        if (grid[2] === grid[4] && grid[2] === grid[6] && grid[2] !== null) {
+            alert(`WIN ${grid[2]}`);
+            window.location.reload(false);
+        }
     }
 
     getCoords(elem) {
