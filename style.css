@@ -1,0 +1,18 @@
+td {
+    width: 100px;
+    height: 100px;
+    border: 2px solid black;
+    padding: 10px 0 10px 40px;
+}
+
+i {
+    font-size: 5rem;
+}
+
+i:hover {
+    cursor: pointer;
+}
+
+table {
+    float: left;
+}
