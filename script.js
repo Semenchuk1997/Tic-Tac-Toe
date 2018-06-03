@@ -1,9 +1,11 @@
 class Game {
     constructor() {
         this.dragObj = {};
-        document.addEventListener('mousedown', this.onMouseDown.bind(this));
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
-        document.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+
+        document.addEventListener('mousedown', this.onMouseDown);
     }
 
     onMouseDown(e) {
@@ -15,18 +17,24 @@ class Game {
 
         let coords = this.getCoords(this.dragObj.elem);
 
-        this.dragObj.shiftX = e.pageX - coords.left;
-        this.dragObj.shiftY = e.pageY - coords.top;
-
         this.dragObj.elem.style.position = 'absolute';
         this.dragObj.elem.style.zIndex = 1000;
 
         this.dragObj.downX = e.pageX;
         this.dragObj.downY = e.pageY;
+
+        this.dragObj.shiftX = this.dragObj.downX - coords.left;
+        this.dragObj.shiftY = this.dragObj.downY - coords.top;
+
+        document.addEventListener('mousemove', this.onMouseMove);
+        document.addEventListener('mouseup', this.onMouseUp);
     }
 
     onMouseMove(e) {
-        this.moveAt(e);
+        if (!this.dragObj.elem) return;
+
+        this.dragObj.elem.style.left = e.pageX - this.dragObj.shiftX + 'px';
+        this.dragObj.elem.style.top = e.pageY - this.dragObj.shiftY + 'px';
     }
 
     onMouseUp(e) {
@@ -52,13 +60,9 @@ class Game {
             this.dragObj = {};
             this.checkField();
         }
-    }
 
-    moveAt(e) {
-        if (this.dragObj.elem) {
-            this.dragObj.elem.style.left = e.pageX - this.dragObj.shiftX + 'px';
-            this.dragObj.elem.style.top = e.pageY - this.dragObj.shiftY + 'px';
-        }
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
     }
 
     appendElement(elem) {

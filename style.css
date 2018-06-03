@@ -9,10 +9,6 @@ i {
     font-size: 5rem;
 }
 
-i:hover {
-    cursor: pointer;
-}
-
 table {
     float: left;
 }
