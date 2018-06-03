@@ -5,11 +5,19 @@ class Game {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
 
-        document.addEventListener('mousedown', this.onMouseDown);
+        document.addEventListener('mousedown', this.onMouseDown, false);
     }
 
+    /**
+     *
+     * @param {event*} e
+     * handle function of mousedown event
+     * set primary properties of parameters
+     */
     onMouseDown(e) {
         if (e.which !== 1) return;
+
+        if (this.dragObj.elem) return;
 
         this.dragObj.elem = e.target.closest('.draggable');
 
@@ -19,6 +27,7 @@ class Game {
 
         this.dragObj.elem.style.position = 'absolute';
         this.dragObj.elem.style.zIndex = 1000;
+        this.dragObj.elem.style.marginLeft = '0';
 
         this.dragObj.downX = e.pageX;
         this.dragObj.downY = e.pageY;
@@ -26,10 +35,15 @@ class Game {
         this.dragObj.shiftX = this.dragObj.downX - coords.left;
         this.dragObj.shiftY = this.dragObj.downY - coords.top;
 
-        document.addEventListener('mousemove', this.onMouseMove);
-        document.addEventListener('mouseup', this.onMouseUp);
+        document.addEventListener('mousemove', this.onMouseMove, false);
+        document.addEventListener('mouseup', this.onMouseUp, false);
     }
 
+    /**
+     *
+     * @param {event} e
+     * change coodrinats of draggable element
+     */
     onMouseMove(e) {
         if (!this.dragObj.elem) return;
 
@@ -37,34 +51,46 @@ class Game {
         this.dragObj.elem.style.top = e.pageY - this.dragObj.shiftY + 'px';
     }
 
+    /**
+     *
+     * @param {event} e
+     *
+     */
     onMouseUp(e) {
         if (!this.dragObj.elem) return;
 
+        //hidden and then show draggable element for catch droppable element
         this.dragObj.elem.parentNode.hidden = true;
 
         let dropElem = document.elementFromPoint(e.clientX, e.clientY);
 
         this.dragObj.elem.parentNode.hidden = false;
 
-        if (dropElem === null || dropElem === undefined) return;
+        //in case when drag element out of page;
+        if (dropElem === null) return null;
 
+        //if event mouseup wasnt on the droppable elements then drag element return to previous position
         if (!dropElem.classList.contains('droppable')) {
             this.dragObj.elem.style.left = this.dragObj.downX - this.dragObj.shiftX + 'px';
             this.dragObj.elem.style.top = this.dragObj.downY - this.dragObj.shiftY + 'px';
-            this.dragObj = {};
-        } else if (dropElem.children[0] === undefined || dropElem.children[0] === null) {
+        } else if (dropElem.children[0] === undefined) { // in case when drag element is over of droppable lement and he is empty
             this.dragObj.elem.style.position = "";
             this.dragObj.elem.classList.remove('draggable');
             dropElem.appendChild(this.dragObj.elem);
             this.appendElement(this.dragObj.elem);
-            this.dragObj = {};
             this.checkField();
         }
 
-        document.removeEventListener('mousemove', this.onMouseMove);
-        document.removeEventListener('mouseup', this.onMouseUp);
+        this.dragObj = {};
+        document.removeEventListener('mousemove', this.onMouseMove, false);
+        document.removeEventListener('mouseup', this.onMouseUp, false);
     }
 
+    /**
+     *
+     * @param {draggable element} elem
+     *  order of X/O
+     */
     appendElement(elem) {
         let newElem = document.createElement('i');
 
@@ -77,6 +103,9 @@ class Game {
         document.getElementsByClassName('player')[0].appendChild(newElem);
     }
 
+    /**
+     * main logic of tic tac toe game
+     */
     checkField() {
         let td = document.getElementsByTagName('td'),
             grid = [],
@@ -145,6 +174,11 @@ class Game {
         }
     }
 
+    /**
+     *
+     * @param {drag element} elem
+     * return get coordinats of drag element in start of dragging event
+     */
     getCoords(elem) {
         var box = elem.getBoundingClientRect();
         return {
